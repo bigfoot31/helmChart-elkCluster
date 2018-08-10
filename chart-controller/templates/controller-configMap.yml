@@ -1,0 +1,23 @@
+
+apiVersion: {{ .Chart.ApiVersion }}
+kind: ConfigMap
+metadata:
+  name: controller- {{- .Chart.AppVersion }}
+  namespace: {{ .Values.namespace }}
+data: 
+  filebeat: |-
+    filebeat:
+      inputs:
+      - type: log
+        enabled: true
+        paths:
+        - /usr/share/filebeat/logs/*.log
+        fields:
+          node: ${NODE_NAME}
+        fields_under_root: true
+    output:
+      logstash:
+        hosts: "${NODE_IP}:5044"
+  ocs: |-
+  {{- range .Files.Lines "files/OCS.INI" }}
+    {{ . }}{{ end }}

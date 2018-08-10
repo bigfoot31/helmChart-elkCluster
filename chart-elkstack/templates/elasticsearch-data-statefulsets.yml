@@ -1,0 +1,83 @@
+
+apiVersion: apps/ {{- .Chart.ApiVersion }}
+kind: StatefulSet
+metadata:
+  name: elasticsearch-data-stateful
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- range .Values.labels.data }}
+    {{ . }}{{ end }}
+spec:
+  replicas: {{ .Values.replicaCount.data }}
+  serviceName: elasticsearch-data-svc
+  selector:
+    matchLabels:
+      {{- range .Values.labels.data }}
+      {{ . }}{{ end }}
+  template:
+    metadata:
+      namespace: {{ .Values.namespace }}
+      labels:
+        {{- range .Values.labels.data }}
+        {{ . }}{{ end }}
+    spec:
+      initContainers:
+      - name: elasticsearch-data-initcontainer
+        image: {{ .Values.images.initcontainer }}
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        securityContext:
+          privileged: true
+        command:
+        - sysctl
+        - -w
+        - vm.max_map_count=262144
+        resources:
+          limits:
+            cpu: 0.01m
+            memory: 25Mi
+          requests:
+            cpu: 0.005m
+            memory: 10Mi
+      containers:
+      - name: elasticsearch-data-container
+        image: {{ .Values.images.elasticsearch }}
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        securityContext:
+          privileged: false
+        ports:
+        - containerPort: 9200
+          hostPort: 9200
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /_cluster/health
+            port: 9200
+          initialDelaySeconds: 20
+          timeoutSeconds: 5
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: persistent
+        - mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+          subPath: elasticsearch.yml
+          name: config
+      volumes:
+      - name: persistent
+        hostPath:
+          path: /home/ansible/elasticsearch-do-not-delete/
+      - name: config
+        configMap:
+          name: elasticsearch- {{- .Chart.AppVersion }}
+          items:
+          - key: data
+            path: elasticsearch.yml
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - namespaces:
+            - {{ .Values.global.namespace }}
+            labelSelector:
+              matchLabels:
+                {{- range .Values.labels.data }}
+                {{ . }}{{ end }}
+            topologyKey: kubernetes.io/hostname 
+

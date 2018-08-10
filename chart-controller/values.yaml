@@ -1,0 +1,14 @@
+labels:
+- "app: hotscan-controller"
+- "version: 8.5.0"
+- "type: backend"
+- "role: scanning"
+
+namespace: hotscan
+
+images:
+  controller: 131.131.131.201:5000/hotscan/controller/mqinterface@sha256:8d2f32c88990052f824e6fccc67e45fbd17fbfe683059842e981213ea8cbdcf1
+  filebeat: 131.131.131.201:5000/beats/filebeat@sha256:339ffde106ae930b00afd9fb9feb91fc9643de8257df9c68b4bc1a88ecf5e2f2
+
+replicaCount: 1
+imagePullPolicy: IfNotPresent

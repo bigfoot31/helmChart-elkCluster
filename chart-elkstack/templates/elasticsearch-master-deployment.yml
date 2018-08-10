@@ -1,0 +1,68 @@
+
+apiVersion: apps/ {{- .Chart.ApiVersion }}
+kind: Deployment
+metadata:
+  name: elasticsearch-deploy- {{- .Chart.AppVersion }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- range .Values.labels.master }}
+    {{ . }}{{ end }}
+spec:
+  replicas: {{ .Values.replicaCount.master }}
+  selector: 
+    matchLabels: 
+      {{- range .Values.labels.master }}
+      {{ . }}{{ end }}
+  template:
+    metadata:
+      namespace: {{ .Values.global.namespace }}
+      labels:
+        {{- range .Values.labels.master }}
+        {{ . }}{{ end }}
+    spec:
+      initContainers:
+      - name: elasticsearch-master-initcontainer
+        image: {{ .Values.images.initcontainer }}
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        command:
+        - sysctl
+        - -w
+        - vm.max_map_count=262144
+        securityContext:
+          privileged: true
+      containers:
+      - name: elasticsearch-master-container
+        image: {{ .Values.images.elasticsearch }}
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        securityContext:
+          privileged: true
+        ports:
+        - containerPort: 9300
+          hostPort: 9300
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 9300
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+          subPath: elasticsearch.yml
+          name: config
+      volumes:
+      - name: config
+        configMap:
+          name: elasticsearch- {{- .Chart.AppVersion }}
+          items:
+          - key: master
+            path: elasticsearch.yml
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - namespaces:
+            - {{ .Values.global.namespace }}
+            labelSelector:
+              matchLabels:
+                {{- range .Values.labels.master }}
+                {{ . }}{{ end }}
+            topologyKey: kubernetes.io/hostname 

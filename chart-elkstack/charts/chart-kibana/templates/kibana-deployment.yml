@@ -1,0 +1,40 @@
+apiVersion: apps/ {{- .Chart.ApiVersion }}
+kind: Deployment
+metadata:
+  name: kibana-deploy {{- .Chart.AppVersion }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- range .Values.labels }}
+      {{ . }}{{ end }}
+  template:
+    metadata:
+      namespace: {{ .Values.global.namespace }}
+      labels:
+        {{- range .Values.labels }}
+        {{ . }}{{ end }}
+    spec:
+      containers:
+      - name: kibana-container
+        image: {{ .Values.images.kibana }}
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        ports:
+        - containerPort: 5601
+          hostPort: 5601
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /usr/share/kibana/config/kibana.yml
+          subPath: kibana.yml
+          name: config
+      volumes:
+      - name: config
+        configMap:
+          name: kibana- {{- .Chart.AppVersion }}
+          items:
+          - key: kibana
+            path: kibana.yml

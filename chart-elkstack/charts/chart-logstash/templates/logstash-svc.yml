@@ -1,0 +1,23 @@
+
+apiVersion: {{ .Chart.ApiVersion }}
+kind: Service
+metadata:
+  name: logstash-svc
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}
+spec:
+  ports:
+  - name: logstash-svc-port-controller
+    port: 5044
+    protocol: TCP
+    targetPort: 5044
+  - name: logstash-svc-port-browser
+    port: 5043
+    protocol: TCP
+    targetPort: 5043
+  selector:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}
+  type: ClusterIP

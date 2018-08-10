@@ -1,0 +1,18 @@
+
+apiVersion: {{ .Chart.ApiVersion }}
+kind: Service
+metadata:
+  name: browser-svc
+  labels:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}
+  namespace: {{ .Values.namespace }}
+spec:
+  type: {{ .Values.serviceType | default "ClusterIP" }}
+  ports:
+  - targetPort: 8080
+    port: 8080
+    nodePort: 30080
+  selector:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}

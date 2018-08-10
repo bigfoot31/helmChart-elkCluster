@@ -1,0 +1,8 @@
+labels:
+- "app: logstash"
+- "version: 6.3.1"
+- "type: daemon"
+- "role: log-ingest"
+
+images:
+  logstash: 131.131.131.201:5000/logstash/logstash@sha256:e2e932fc7ce50e7e6c1152b4bd723db8c6e699524ec0fc27b5ea7580444c4d58

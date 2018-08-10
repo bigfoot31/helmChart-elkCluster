@@ -1,0 +1,62 @@
+apiVersion: apps/ {{- .Chart.ApiVersion }}
+kind: DaemonSet
+metadata:
+  name: logstash-daemon
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}
+spec:
+  selector:
+    matchLabels:
+      {{- range .Values.labels }}
+      {{ . }}{{ end }}
+  template:
+    metadata:
+      namespace: {{ .Values.global.namespace }}
+      labels:
+        {{- range .Values.labels }}
+        {{ . }}{{ end }}
+    spec:
+      containers:
+      - name: logstash-container
+        image: {{ .Values.images.logstash }}
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        ports:
+        - containerPort: 5044
+          hostPort: 5044
+          protocol: TCP
+        - containerPort: 5043
+          hostPort: 5043
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /usr/share/logstash/config/logstash.yml
+          subPath: logstash.yml
+          name: config
+        - mountPath: /usr/share/logstash/config/pipelines.yml
+          subPath: pipelines.yml
+          name: pipeline-config
+        - mountPath: /usr/share/logstash/pipeline
+          name: pipelines
+      volumes:
+      - name: config
+        configMap:
+          name: logstash- {{- .Chart.AppVersion }}
+          items:
+          - key: logstash
+            path: logstash.yml
+      - name: pipeline-config
+        configMap:
+          name: logstash- {{- .Chart.AppVersion }}
+          items:
+          - key: pipelines
+            path: pipelines.yml
+      - name: pipelines
+        configMap:
+          name: logstash- {{- .Chart.AppVersion }}
+          items:
+          - key: browser
+            path: browser.conf
+          - key: controller
+            path: controller.conf
+

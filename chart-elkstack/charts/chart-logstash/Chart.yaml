@@ -1,0 +1,15 @@
+apiVersion: v1
+name: chart-logstash
+version: 1.0.0
+description: helm deployment of logstash
+keywords:
+  - logstash
+  - log-monitoring
+maintainers:
+  - name: Probhonjon Baruah
+    email: probhonjon.baruah@cgi.com
+    url: https://bigfoot31.github.io
+engine: gotpl
+appVersion: 6.3.1
+deprecated: false
+tillerVersion: ">=2.1.0"

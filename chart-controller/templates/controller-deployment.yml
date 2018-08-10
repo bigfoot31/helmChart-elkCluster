@@ -1,0 +1,83 @@
+
+apiVersion: apps/ {{- .Chart.ApiVersion }}
+kind: Deployment
+metadata:
+  labels:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}
+  name: controller-deploy- {{- .Chart.AppVersion }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels: 
+      {{- range .Values.labels }}
+      {{ . }}{{ end }}
+  template: 
+    metadata: 
+      namespace: {{ .Values.namespace }}
+      labels:
+        {{- range .Values.labels }}
+        {{ . }}{{ end }}
+    spec: 
+      containers: 
+      - name: hotscan-controller-mqinterface
+        image: {{ .Values.images.controller }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        command: ["/bin/bash","-c"]
+        args: ["./entrypoint.sh"]
+        resources:
+          requests:
+            cpu: 250m
+        readinessProbe:
+          exec:
+            command:
+            - grep 
+            - "Loaded dictionary"
+            - /home/hotscan/TODAY/LOGS/Al1.log
+          initialDelaySeconds: 40
+          periodSeconds: 15
+          successThreshold: 1
+          failureThreshold: 3
+        volumeMounts:
+        - mountPath: /home/hotscan/TODAY/LOGS/
+          name: exchange
+        - mountPath: /home/hotscan/bin/OCS.INI
+          subPath: OCS.INI
+          name: ocs
+      - name: filebeat-container
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{ .Values.images.filebeat }}
+        resources:
+          requests:
+            cpu: 250m
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        volumeMounts:
+        - mountPath: /usr/share/filebeat/filebeat.yml
+          subPath: filebeat.yml
+          name: config
+        - mountPath: /usr/share/filebeat/logs/
+          name: exchange
+      volumes:
+      - name: exchange
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: controller- {{- .Chart.AppVersion }}
+          items:
+          - key: filebeat
+            path: filebeat.yml
+      - name: ocs
+        configMap:
+          name: controller- {{- .Chart.AppVersion }}
+          items:
+          - key: ocs
+            path: OCS.INI

@@ -1,0 +1,95 @@
+apiVersion: apps/ {{- .Chart.ApiVersion }}
+kind: Deployment
+metadata:
+  labels:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}
+  name: browser-deploy- {{- .Chart.AppVersion }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- range .Values.labels }}
+      {{ . }}{{ end }}
+  template:
+    metadata:
+      labels:
+        {{- range .Values.labels }}
+        {{ . }}{{ end }}
+      name: browser-pod- {{- .Chart.AppVersion }}
+      namespace: {{ .Values.namespace }}
+    spec:
+      containers:
+      - name: browser-deploy
+        image: {{ .Values.images.browser }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }} 
+        readinessProbe:
+          httpGet:
+            path: HotScan
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: HotScan
+            port: 8080
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        volumeMounts:
+        - mountPath: /apache-tomcat-7.0.88/bin/logs/
+          name: exchange
+        - mountPath: /apache-tomcat-7.0.88/webapps/HotScan/WEB-INF/classes/resources/dbpool.properties
+          subPath: dbpool.properties
+          name: database
+        - mountPath: /apache-tomcat-7.0.88/webapps/HotScan/WEB-INF/classes/resources/InstanceResources.properties
+          subPath: InstanceResources.properties
+          name: instance
+      - name: browser-filebeat-container
+        image: {{ .Values.images.filebeat }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        volumeMounts:
+        - mountPath: /usr/share/filebeat/filebeat.yml
+          subPath: filebeat.yml
+          name: config
+        - mountPath: /usr/share/filebeat/logs/
+          name: exchange
+      volumes:
+      - name: exchange
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: browser- {{- .Chart.AppVersion }}
+          items:
+          - key: filebeat
+            path: filebeat.yml
+      - name: database
+        configMap:
+          name: browser- {{- .Chart.AppVersion }}
+          items:
+          - key: dbpool
+            path: dbpool.properties
+      - name: instance
+        configMap:
+          name: browser- {{- .Chart.AppVersion }}
+          items:
+          - key: instance-resources
+            path: InstanceResources.properties

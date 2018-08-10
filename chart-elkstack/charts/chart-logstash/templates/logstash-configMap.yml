@@ -1,0 +1,27 @@
+
+apiVersion: {{ .Chart.ApiVersion }}
+kind: ConfigMap
+metadata:
+  name: logstash- {{- .Chart.AppVersion }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- range .Values.labels }}
+    {{ . }}{{ end }}
+data:
+  logstash: |
+    http.host: "0.0.0.0"
+    xpack.monitoring.elasticsearch.url: "elasticsearch-data-svc.elkstack.svc.cluster.local:9200"
+
+  pipelines: |
+    - pipeline.id: browser
+      path.config: "/usr/share/logstash/pipeline/browser.conf"
+    - pipeline.id: controller
+      path.config: "/usr/share/logstash/pipeline/controller.conf"
+
+  browser: |-
+    {{- range .Files.Lines "files/browser.conf"}}
+    {{ . }}{{ end }}
+
+  controller: |-
+    {{- range .Files.Lines "files/controller.conf"}}
+    {{ . }}{{ end }}

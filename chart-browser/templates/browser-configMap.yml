@@ -1,0 +1,27 @@
+apiVersion: {{ .Chart.ApiVersion }}
+kind: ConfigMap
+metadata:
+  name: browser- {{- .Chart.AppVersion }}
+  namespace: {{ .Values.namespace }}
+data: 
+  dbpool: |-
+    {{- range .Files.Lines "files/dbpool.properties" }}
+      {{ . }}{{ end }}
+
+  instance-resources: |-
+    {{- range .Files.Lines "files/InstanceResources.properties" }}
+      {{ . }}{{ end }}
+
+  filebeat: |-
+    filebeat:
+      inputs:
+      - type: log
+        enabled: true
+        paths:
+        - /usr/share/filebeat/logs/*.log
+        fields:
+          node: ${NODE_NAME}
+        fields_under_root: true
+    output:
+      logstash:
+        hosts: "${NODE_IP}:5043"

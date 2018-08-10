@@ -1,0 +1,17 @@
+apiVersion: v1
+name: chart-controller
+version: 1.0.0
+description: helm deployment of hotscan controller application
+keywords:
+  - hotscan
+  - controller
+  - backend
+  - C
+maintainers:
+  - name: Probhonjon Baruah
+    email: probhonjon.baruah@cgi.com
+    url: https://bigfoot31.github.io
+engine: gotpl
+appVersion: 8.5.0
+deprecated: false
+tillerVersion: ">=2.1.0"
