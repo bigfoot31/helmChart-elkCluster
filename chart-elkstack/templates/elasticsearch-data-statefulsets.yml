@@ -21,6 +21,7 @@ spec:
         {{- range .Values.labels.data }}
         {{ . }}{{ end }}
     spec:
+      serviceAccountName: elasticsearch-data-svc-acc
       initContainers:
       - name: elasticsearch-data-initcontainer
         image: {{ .Values.images.initcontainer }}

@@ -20,6 +20,7 @@ spec:
         {{- range .Values.labels.master }}
         {{ . }}{{ end }}
     spec:
+      serviceAccountName: elasticsearch-master-svc-acc
       initContainers:
       - name: elasticsearch-master-initcontainer
         image: {{ .Values.images.initcontainer }}
