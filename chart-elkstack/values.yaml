@@ -18,13 +18,12 @@ replicaCount:
   data: 2
   master: 3
 
-clusterName: k8s-elasticsearch-cluster
-
-min_master: 2
-
-serviceType:
-  data: ClusterIP
-  master: ClusterIP
+elasticsearch:
+  clusterName: k8s-elasticsearch-cluster
+  min_master: 2
+  serviceType:
+    data: ClusterIP
+    master: ClusterIP
 
 global:
   namespace: elkstack

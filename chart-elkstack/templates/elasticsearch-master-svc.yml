@@ -16,5 +16,5 @@ spec:
     port: 9300
     targetPort: 9300
     protocol: TCP
-  type: {{ .Values.serviceType.master | default "None" }}
+  type: {{ .Values.elasticsearch.serviceType.master | default "None" }}
   clusterIP: None

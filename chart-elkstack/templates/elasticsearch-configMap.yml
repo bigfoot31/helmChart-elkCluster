@@ -6,9 +6,9 @@ metadata:
   namespace: {{ .Values.global.namespace }}
 data: 
   master: |
-    cluster.name: {{ .Values.clusterName }}
+    cluster.name: {{ .Values.elasticsearch.clusterName }}
     discovery.zen:
-      minimum_master_nodes: {{ .Values.min_master }}
+      minimum_master_nodes: {{ .Values.elasticsearch.min_master }}
       ping.unicast.hosts: elasticsearch-master-svc.elkstack.svc.cluster.local:9300
     network.host: _eth0_
     node:
@@ -21,9 +21,9 @@ data:
     xpack.graph.enabled: false
     xpack.watcher.enabled: false
   data: |
-    cluster.name: {{ .Values.clusterName }}
+    cluster.name: {{ .Values.elasticsearch.clusterName }}
     discovery.zen:
-      minimum_master_nodes: {{ .Values.min_master }}
+      minimum_master_nodes: {{ .Values.elasticsearch.min_master }}
       ping.unicast.hosts: elasticsearch-master-svc.elkstack.svc.cluster.local:9300
     network.host: 0.0.0.0
     node:

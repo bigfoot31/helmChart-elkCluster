@@ -16,4 +16,4 @@ spec:
     port: 9200
     targetPort: 9200
     protocol: TCP
-  type: {{ .Values.serviceType.data | default "ClusterIP" }}
+  type: {{ .Values.elasticsearch.serviceType.data | default "ClusterIP" }}
