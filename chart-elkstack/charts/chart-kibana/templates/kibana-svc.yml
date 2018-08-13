@@ -17,5 +17,5 @@ spec:
   selector:
     {{- range .Values.labels }}
     {{ . }}{{ end }}
-  type: {{ .Values.serviceType | default "NodePort" }}
+  type: {{ .Values.kibana.serviceType | default "NodePort" }}
 
