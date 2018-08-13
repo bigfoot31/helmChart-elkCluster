@@ -7,6 +7,8 @@ metadata:
     {{ . }}{{ end }}
   name: controller-deploy- {{- .Chart.AppVersion }}
   namespace: {{ .Values.namespace }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/controller-configMap.yml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector: 
@@ -20,8 +22,9 @@ spec:
         {{- range .Values.labels }}
         {{ . }}{{ end }}
     spec: 
+      serviceAccountName: controller-svc-acc
       containers: 
-      - name: hotscan-controller-mqinterface
+      - name: controller-mqinterface
         image: {{ .Values.images.controller }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         command: ["/bin/bash","-c"]

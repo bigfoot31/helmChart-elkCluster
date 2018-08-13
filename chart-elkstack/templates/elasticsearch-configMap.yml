@@ -4,12 +4,15 @@ kind: ConfigMap
 metadata:
   name: elasticsearch- {{- .Chart.AppVersion }}
   namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- range .Values.labels.general }}
+    {{ . }}{{ end }}
 data: 
   master: |
     cluster.name: {{ .Values.elasticsearch.clusterName }}
     discovery.zen:
       minimum_master_nodes: {{ .Values.elasticsearch.min_master }}
-      ping.unicast.hosts: elasticsearch-master-svc.elkstack.svc.cluster.local:9300
+      ping.unicast.hosts: elasticsearch-master-svc. {{- .Values.global.namespace -}} .svc.cluster.local:9300
     network.host: _eth0_
     node:
       master: true
@@ -24,7 +27,7 @@ data:
     cluster.name: {{ .Values.elasticsearch.clusterName }}
     discovery.zen:
       minimum_master_nodes: {{ .Values.elasticsearch.min_master }}
-      ping.unicast.hosts: elasticsearch-master-svc.elkstack.svc.cluster.local:9300
+      ping.unicast.hosts: elasticsearch-master-svc. {{- .Values.global.namespace -}} .svc.cluster.local:9300
     network.host: 0.0.0.0
     node:
       master: false

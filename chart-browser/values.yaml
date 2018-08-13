@@ -13,3 +13,11 @@ images:
 serviceType: NodePort
 replicaCount: 1
 imagePullPolicy: Always
+
+browser:
+  dbpool:
+    database:
+      url: jdbc:oracle:thin:@131.131.131.201:1521:orcl
+      username: HOTSCANDB
+      password: hotinstance
+      instanceName: hotinstance

@@ -5,12 +5,11 @@ metadata:
   namespace: {{ .Values.namespace }}
 data: 
   dbpool: |-
-    {{- range .Files.Lines "files/dbpool.properties" }}
-      {{ . }}{{ end }}
+    {{- include "browser.dbpool" . | indent 2 }}
 
   instance-resources: |-
-    {{- range .Files.Lines "files/InstanceResources.properties" }}
-      {{ . }}{{ end }}
+  {{- range .Files.Lines "files/InstanceResources.properties" }}
+    {{ . }}{{ end }}
 
   filebeat: |-
     filebeat:

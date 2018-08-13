@@ -10,7 +10,7 @@ metadata:
 data:
   logstash: |
     http.host: "0.0.0.0"
-    xpack.monitoring.elasticsearch.url: "elasticsearch-data-svc.elkstack.svc.cluster.local:9200"
+    xpack.monitoring.elasticsearch.url: "elasticsearch-data-svc. {{- .Values.global.namespace -}} .svc.cluster.local:9200"
 
   pipelines: |
     - pipeline.id: browser

@@ -1,4 +1,8 @@
 labels:
+  general:
+  - "app: elasticsearch"
+  - "version: 6.3.1"
+  - "role: log-monitoring"
   data:
   - "app: elasticsearch"
   - "version: 6.3.1"
@@ -26,5 +30,5 @@ elasticsearch:
     master: ClusterIP
 
 global:
-  namespace: elkstack
+  namespace: log-monitoring
   imagePullPolicy: IfNotPresent

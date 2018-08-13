@@ -6,6 +6,8 @@ metadata:
     {{ . }}{{ end }}
   name: browser-deploy- {{- .Chart.AppVersion }}
   namespace: {{ .Values.namespace }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/browser-configMap.yml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount }}
   strategy: 
@@ -25,6 +27,7 @@ spec:
       name: browser-pod- {{- .Chart.AppVersion }}
       namespace: {{ .Values.namespace }}
     spec:
+      serviceAccountName: browser-svc-acc
       containers:
       - name: browser-deploy
         image: {{ .Values.images.browser }}

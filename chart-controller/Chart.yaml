@@ -1,9 +1,8 @@
 apiVersion: v1
 name: chart-controller
 version: 1.0.0
-description: helm deployment of hotscan controller application
+description: helm deployment of controller application
 keywords:
-  - hotscan
   - controller
   - backend
   - C
