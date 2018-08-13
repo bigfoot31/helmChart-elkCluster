@@ -18,6 +18,7 @@ spec:
         {{- range .Values.labels }}
         {{ . }}{{ end }}
     spec:
+      serviceAccountName: logstash-daemon-svc-acc
       containers:
       - name: logstash-container
         image: {{ .Values.images.logstash }}

@@ -19,6 +19,7 @@ spec:
         {{- range .Values.labels }}
         {{ . }}{{ end }}
     spec:
+      serviceAccountName: kibana-deploy-svc-acc
       containers:
       - name: kibana-container
         image: {{ .Values.images.kibana }}
