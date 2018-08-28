@@ -2,7 +2,7 @@
 apiVersion: apps/ {{- .Chart.ApiVersion }}
 kind: Deployment
 metadata:
-  name: elasticsearch-deploy- {{- .Chart.AppVersion }}
+  name: elasticsearch-deploy
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- range .Values.labels.master }}
@@ -23,8 +23,8 @@ spec:
       serviceAccountName: elasticsearch-master-svc-acc
       initContainers:
       - name: elasticsearch-master-initcontainer
-        image: {{ .Values.images.initcontainer }}
-        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        image: {{ .Values.images.elasticsearch.repository -}} / {{- .Values.images.elasticsearch.imageDigest }}
+        imagePullPolicy: {{ .Values.images.elasticsearch.pullPolicy }}
         command:
         - sysctl
         - -w
@@ -33,17 +33,16 @@ spec:
           privileged: true
       containers:
       - name: elasticsearch-master-container
-        image: {{ .Values.images.elasticsearch }}
-        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        image: {{ .Values.images.elasticsearch.repository -}} / {{- .Values.images.elasticsearch.imageDigest }}
+        imagePullPolicy: {{ .Values.images.elasticsearch.pullPolicy }}
         securityContext:
           privileged: true
         ports:
-        - containerPort: 9300
-          hostPort: 9300
+        - containerPort: {{ .Values.global.ports.elasticsearch.transport }}
           protocol: TCP
         readinessProbe:
           tcpSocket:
-            port: 9300
+            port: {{ .Values.global.ports.elasticsearch.transport }}
           initialDelaySeconds: 20
           periodSeconds: 10
         volumeMounts:

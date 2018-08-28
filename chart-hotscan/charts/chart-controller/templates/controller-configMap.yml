@@ -3,7 +3,7 @@ apiVersion: {{ .Chart.ApiVersion }}
 kind: ConfigMap
 metadata:
   name: controller- {{- .Chart.AppVersion }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
 data: 
   filebeat: |-
     filebeat:

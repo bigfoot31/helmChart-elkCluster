@@ -7,7 +7,9 @@ labels:
 replicaCount: 1
 
 images:
-  kibana: 131.131.131.201:5000/kibana/kibana@sha256:847ca40b2405032de4f3d39796f9f493209d208f4baf99dfff09417fdb4071f9
+  kibana:
+    repository: 131.131.131.201:5000
+    imageDigest: kibana/kibana@sha256:847ca40b2405032de4f3d39796f9f493209d208f4baf99dfff09417fdb4071f9
+    pullPolicy: IfNotPresent
 
-kibana:
-  serviceType: NodePort
+serviceType: NodePort

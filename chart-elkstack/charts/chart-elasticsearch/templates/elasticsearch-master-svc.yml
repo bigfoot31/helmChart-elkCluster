@@ -2,7 +2,7 @@
 apiVersion: {{ .Chart.ApiVersion }}
 kind: Service
 metadata:
-  name: elasticsearch-master-svc
+  name: {{ .Values.global.services.elasticsearch.master }}
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- range .Values.labels.master }}
@@ -13,8 +13,8 @@ spec:
     {{ . }}{{ end }}
   ports:
   - name: transport
-    port: 9300
-    targetPort: 9300
+    port: {{ .Values.global.ports.elasticsearch.transport }}
+    targetPort: {{ .Values.global.ports.elasticsearch.transport }}
     protocol: TCP
-  type: {{ .Values.elasticsearch.serviceType.master | default "None" }}
+  type: {{ .Values.serviceType.master }}
   clusterIP: None

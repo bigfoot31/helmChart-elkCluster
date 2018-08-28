@@ -1,0 +1,5 @@
+
+apiVersion: {{ .Chart.ApiVersion }}
+kind: Namespace
+metadata:
+  name: {{ .Values.global.namespace }}

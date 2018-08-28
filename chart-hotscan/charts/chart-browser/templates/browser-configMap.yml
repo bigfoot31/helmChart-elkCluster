@@ -2,7 +2,7 @@ apiVersion: {{ .Chart.ApiVersion }}
 kind: ConfigMap
 metadata:
   name: browser- {{- .Chart.AppVersion }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
 data: 
   dbpool: |-
     {{- include "browser.dbpool" . | indent 2 }}

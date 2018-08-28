@@ -1,0 +1,4 @@
+global:
+  namespace: hotscan
+  services:
+    browser: browser-svc

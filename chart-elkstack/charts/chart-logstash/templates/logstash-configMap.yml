@@ -10,7 +10,7 @@ metadata:
 data:
   logstash: |
     http.host: "0.0.0.0"
-    xpack.monitoring.elasticsearch.url: "elasticsearch-data-svc. {{- .Values.global.namespace -}} .svc.cluster.local:9200"
+    xpack.monitoring.elasticsearch.url: {{ printf "http://%s.%s.svc.cluster.local:%d" .Values.global.services.elasticsearch.data .Values.global.namespace (int64 .Values.global.ports.elasticsearch.http) | quote }}
 
   pipelines: |
     - pipeline.id: browser
@@ -19,9 +19,7 @@ data:
       path.config: "/usr/share/logstash/pipeline/controller.conf"
 
   browser: |-
-    {{- range .Files.Lines "files/browser.conf"}}
-    {{ . }}{{ end }}
+    {{- include "pipelines.browser" . | indent 4 }}
 
   controller: |-
-    {{- range .Files.Lines "files/controller.conf"}}
-    {{ . }}{{ end }}
+    {{- include "pipelines.controller" . | indent 4 }}

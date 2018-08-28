@@ -11,5 +11,5 @@ data:
   kibana: |
     server.name: kibana
     server.host: "0"
-    elasticsearch.url: "http://elasticsearch-data-svc. {{- .Values.global.namespace -}} .svc.cluster.local:9200"
+    elasticsearch.url: {{ printf "http://%s.%s.svc.cluster.local:%d" .Values.global.services.elasticsearch.data .Values.global.namespace (int64 .Values.global.ports.elasticsearch.http) | quote }}
     xpack.monitoring.ui.container.elasticsearch.enabled: false

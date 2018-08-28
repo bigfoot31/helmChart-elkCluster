@@ -2,7 +2,7 @@
 apiVersion: {{ .Chart.ApiVersion }}
 kind: Service
 metadata:
-  name: elasticsearch-data-svc
+  name: {{ .Values.global.services.elasticsearch.data }}
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- range .Values.labels.data }}
@@ -16,4 +16,4 @@ spec:
     port: 9200
     targetPort: 9200
     protocol: TCP
-  type: {{ .Values.elasticsearch.serviceType.data | default "ClusterIP" }}
+  type: {{ .Values.serviceType.data | default "ClusterIP" }}

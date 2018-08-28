@@ -6,7 +6,7 @@ metadata:
     {{- range .Values.labels }}
     {{ . }}{{ end }}
   name: controller-deploy- {{- .Chart.AppVersion }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/controller-configMap.yml") . | sha256sum }}
 spec:
@@ -25,8 +25,8 @@ spec:
       serviceAccountName: controller-svc-acc
       containers: 
       - name: controller-mqinterface
-        image: {{ .Values.images.controller }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{ .Values.images.controller.repository -}} / {{- .Values.images.controller.imageDigest }}
+        imagePullPolicy: {{ .Values.images.controller.pullPolicy }}
         command: ["/bin/bash","-c"]
         args: ["./entrypoint.sh"]
         resources:
@@ -49,8 +49,8 @@ spec:
           subPath: OCS.INI
           name: ocs
       - name: filebeat-container
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
-        image: {{ .Values.images.filebeat }}
+        image: {{ .Values.images.filebeat.repository -}} / {{- .Values.images.filebeat.imageDigest }}
+        imagePullPolicy: {{ .Values.images.filebeat.pullPolicy }}
         resources:
           requests:
             cpu: 250m

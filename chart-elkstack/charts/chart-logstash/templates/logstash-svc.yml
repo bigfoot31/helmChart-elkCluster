@@ -2,7 +2,7 @@
 apiVersion: {{ .Chart.ApiVersion }}
 kind: Service
 metadata:
-  name: logstash-svc
+  name: {{ .Values.global.services.logstash }}
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- range .Values.labels }}
@@ -10,13 +10,13 @@ metadata:
 spec:
   ports:
   - name: logstash-svc-port-controller
-    port: 5044
+    port: {{ .Values.global.ports.logstash.controller }}
     protocol: TCP
-    targetPort: 5044
+    targetPort: {{ .Values.global.ports.logstash.controller }}
   - name: logstash-svc-port-browser
-    port: 5043
+    port: {{ .Values.global.ports.logstash.browser }}
     protocol: TCP
-    targetPort: 5043
+    targetPort: {{ .Values.global.ports.logstash.browser }}
   selector:
     {{- range .Values.labels }}
     {{ . }}{{ end }}

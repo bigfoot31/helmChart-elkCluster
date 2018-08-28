@@ -2,7 +2,7 @@
 apiVersion: {{ .Chart.ApiVersion }}
 kind: Service
 metadata:
-  name: kibana-svc
+  name: {{ .Values.global.services.kibana }}
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- range .Values.labels }}
@@ -10,12 +10,12 @@ metadata:
 spec:
   ports:
   - name: kibana-svc-port
-    port: 5601
+    port: {{ .Values.global.ports.kibana.containerPort }}
     protocol: TCP
-    targetPort: 5601
-    nodePort: 31001
+    targetPort: {{ .Values.global.ports.kibana.containerPort }}
+    nodePort: {{ .Values.global.ports.kibana.nodePort }}
   selector:
     {{- range .Values.labels }}
     {{ . }}{{ end }}
-  type: {{ .Values.kibana.serviceType | default "NodePort" }}
+  type: {{ .Values.serviceType | default "NodePort" }}
 

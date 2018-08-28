@@ -21,14 +21,14 @@ spec:
       serviceAccountName: logstash-svc-acc
       containers:
       - name: logstash-container
-        image: {{ .Values.images.logstash }}
-        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        image: {{ .Values.images.logstash.repository -}} / {{- .Values.images.logstash.imageDigest }}
+        imagePullPolicy: {{ .Values.images.logstash.pullPolicy }}
         ports:
-        - containerPort: 5044
-          hostPort: 5044
+        - containerPort: {{ .Values.global.ports.logstash.controller }}
+          hostPort: {{ .Values.global.ports.logstash.controller }}
           protocol: TCP
-        - containerPort: 5043
-          hostPort: 5043
+        - containerPort: {{ .Values.global.ports.logstash.browser }}
+          hostPort: {{ .Values.global.ports.logstash.browser }}
           protocol: TCP
         volumeMounts:
         - mountPath: /usr/share/logstash/config/logstash.yml

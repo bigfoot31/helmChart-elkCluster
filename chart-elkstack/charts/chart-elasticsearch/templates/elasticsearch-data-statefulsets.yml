@@ -24,8 +24,8 @@ spec:
       serviceAccountName: elasticsearch-data-svc-acc
       initContainers:
       - name: elasticsearch-data-initcontainer
-        image: {{ .Values.images.initcontainer }}
-        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        image: {{ .Values.images.initcontainer.repository -}} / {{- .Values.images.initcontainer.imageDigest }}
+        imagePullPolicy: {{ .Values.images.initcontainer.pullPolicy }}
         securityContext:
           privileged: true
         command:
@@ -41,18 +41,17 @@ spec:
             memory: 10Mi
       containers:
       - name: elasticsearch-data-container
-        image: {{ .Values.images.elasticsearch }}
-        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        image: {{ .Values.images.elasticsearch.repository -}} / {{- .Values.images.elasticsearch.imageDigest }}
+        imagePullPolicy: {{ .Values.images.elasticsearch.pullPolicy }}
         securityContext:
           privileged: false
         ports:
-        - containerPort: 9200
-          hostPort: 9200
+        - containerPort: {{ .Values.global.ports.elasticsearch.http }}
           protocol: TCP
         readinessProbe:
           httpGet:
             path: /_cluster/health
-            port: 9200
+            port: {{ .Values.global.ports.elasticsearch.http }}
           initialDelaySeconds: 20
           timeoutSeconds: 5
         volumeMounts:

@@ -13,6 +13,6 @@ maintainers:
     email: probhonjonbaruah@gmail.com
     url: https://bigfoot31.github.io
 engine: gotpl
-appVersion: 9.0.0
+appVersion: 8.5.0
 deprecated: false
 tillerVersion: ">=2.1.0"

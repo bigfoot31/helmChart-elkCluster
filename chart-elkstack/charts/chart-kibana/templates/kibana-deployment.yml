@@ -1,7 +1,7 @@
 apiVersion: apps/ {{- .Chart.ApiVersion }}
 kind: Deployment
 metadata:
-  name: kibana-deploy {{- .Chart.AppVersion }}
+  name: kibana-deploy
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- range .Values.labels }}
@@ -22,11 +22,10 @@ spec:
       serviceAccountName: kibana-svc-acc
       containers:
       - name: kibana-container
-        image: {{ .Values.images.kibana }}
-        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        image: {{ .Values.images.kibana.repository -}} / {{- .Values.images.kibana.imageDigest }}
+        imagePullPolicy: {{ .Values.images.kibana.pullPolicy }}
         ports:
-        - containerPort: 5601
-          hostPort: 5601
+        - containerPort: {{ .Values.global.ports.kibana.containerPort }}
           protocol: TCP
         volumeMounts:
         - mountPath: /usr/share/kibana/config/kibana.yml

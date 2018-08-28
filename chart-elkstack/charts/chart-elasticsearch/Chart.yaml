@@ -1,9 +1,10 @@
 apiVersion: v1
-name: chart-elkstack
+name: chart-elasticsearch
 version: 1.0.0
-description: helm deployment of a elastic stack cluster
+description: helm deployment of a elasticsearch cluster
 keywords:
-  - elkstack
+  - elasticsearch
+  - elasticsearch-cluster
   - log-monitoring
 maintainers:
   - name: Probhonjon Baruah

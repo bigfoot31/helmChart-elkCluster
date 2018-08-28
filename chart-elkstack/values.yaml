@@ -1,34 +1,18 @@
-labels:
-  general:
-  - "app: elasticsearch"
-  - "version: 6.3.1"
-  - "role: log-monitoring"
-  data:
-  - "app: elasticsearch"
-  - "version: 6.3.1"
-  - "type: data"
-  - "role: log-monitoring"
-  master:
-  - "app: elasticsearch"
-  - "version: 6.3.1"
-  - "type: master"
-  - "role: log-monitoring"
-
-images:
-  initcontainer: 131.131.131.201:5000/busybox@sha256:91ef6c1c52b166be02645b8efee30d1ee65362024f7da41c404681561734c465
-  elasticsearch: 131.131.131.201:5000/elasticsearch/elasticsearch@sha256:178051b116c91ae525369f3468aec167fb2c1cd90456e86c717cb1d135b8595e
-
-replicaCount:
-  data: 2
-  master: 3
-
-elasticsearch:
-  clusterName: k8s-elasticsearch-cluster
-  min_master: 2
-  serviceType:
-    data: ClusterIP
-    master: ClusterIP
-
 global:
+  services:
+    elasticsearch:
+      data: elasticsearch-data-svc
+      master: elasticsearch-master-svc
+    kibana: kibana-svc
+    logstash: logstash-svc
+  ports:
+    elasticsearch:
+      http: 9200
+      transport: 9300
+    kibana:
+      nodePort: 31001
+      containerPort: 5601
+    logstash:
+      browser: 5043
+      controller: 5044
   namespace: log-monitoring
-  imagePullPolicy: IfNotPresent

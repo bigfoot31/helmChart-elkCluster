@@ -1,0 +1,39 @@
+## configuration related to k8s
+labels:
+  general:
+  - "app: elasticsearch"
+  - "version: 6.3.1"
+  - "role: log-monitoring"
+  data:
+  - "app: elasticsearch"
+  - "version: 6.3.1"
+  - "type: data"
+  - "role: log-monitoring"
+  master:
+  - "app: elasticsearch"
+  - "version: 6.3.1"
+  - "type: master"
+  - "role: log-monitoring"
+
+images:
+  initcontainer:
+    repository: 131.131.131.201:5000
+    imageDigest: busybox@sha256:91ef6c1c52b166be02645b8efee30d1ee65362024f7da41c404681561734c465
+    pullPolicy: IfNotPresent
+  elasticsearch: 
+    repository: 131.131.131.201:5000
+    imageDigest: elasticsearch/elasticsearch@sha256:178051b116c91ae525369f3468aec167fb2c1cd90456e86c717cb1d135b8595e
+    pullPolicy: IfNotPresent
+
+replicaCount:
+  data: 2
+  master: 3
+
+serviceType:
+  data: ClusterIP
+  master: ClusterIP
+
+## configuration specific to elasticsearch internal working
+elasticsearch:
+  clusterName: k8s-elasticsearch-cluster
+  min_master: 2

@@ -1,0 +1,27 @@
+labels:
+- "app: hotscan-browser"
+- "version: 8.5.0"
+- "type: frontend"
+- "role: webinterface"
+
+images:
+  browser:
+    repository: 131.131.131.201:5000
+    imageDigest: hotscan/browser@sha256:9044805ffb0da0fd328905c0fa224f09251a8af41cb25e7fbe9c2d7f78e1b0a5
+    pullPolicy: IfNotPresent
+  filebeat: 
+    repository: 131.131.131.201:5000
+    imageDigest: beats/filebeat@sha256:339ffde106ae930b00afd9fb9feb91fc9643de8257df9c68b4bc1a88ecf5e2f2
+    pullPolicy: IfNotPresent
+
+serviceType: NodePort
+
+replicaCount: 1
+
+browser:
+  dbpool:
+    database:
+      url: jdbc:oracle:thin:@131.131.131.201:1521:orcl
+      username: HOTSCANDB
+      password: hotinstance
+      instanceName: hotinstance

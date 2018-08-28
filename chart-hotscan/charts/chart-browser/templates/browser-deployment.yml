@@ -5,7 +5,7 @@ metadata:
     {{- range .Values.labels }}
     {{ . }}{{ end }}
   name: browser-deploy- {{- .Chart.AppVersion }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/browser-configMap.yml") . | sha256sum }}
 spec:
@@ -30,8 +30,8 @@ spec:
       serviceAccountName: browser-svc-acc
       containers:
       - name: browser-deploy
-        image: {{ .Values.images.browser }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }} 
+        image: {{ .Values.images.browser.repository -}} / {{- .Values.images.browser.imageDigest }}
+        imagePullPolicy: {{ .Values.images.browser.pullPolicy }}
         readinessProbe:
           httpGet:
             path: HotScan
@@ -58,8 +58,8 @@ spec:
           subPath: InstanceResources.properties
           name: instance
       - name: browser-filebeat-container
-        image: {{ .Values.images.filebeat }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{ .Values.images.filebeat.repository -}} / {{- .Values.images.filebeat.imageDigest }}
+        imagePullPolicy: {{ .Values.images.filebeat.pullPolicy }}
         env:
         - name: NODE_IP
           valueFrom:
